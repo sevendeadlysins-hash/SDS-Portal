@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Management Hub | SDS </title>
+    
     <link rel="shortcut icon" href="./SDS_II.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=New+Tegomin&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="./SDS_II.ico"> <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=New+Tegomin&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            /* 現在のファイル名に合わせて haikei.png を指定 */
+            /* 背景画像：haikei.png を共通使用 */
             --bg-image: url('./haikei.png'); 
-            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(0, 0, 0, 0.55);
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-color: #f0f0f0;
             --accent-color: #d4af37; /* Gold */
@@ -20,8 +22,7 @@
             margin: 0;
             padding: 0;
             font-family: 'New Tegomin', serif;
-            /* 背景画像を共通化 */
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), var(--bg-image);
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), var(--bg-image);
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -45,82 +46,86 @@
 
         h1 {
             font-family: 'IM Fell English', serif;
-            font-size: clamp(2rem, 8vw, 3.2rem);
+            font-size: clamp(2.2rem, 8vw, 3.5rem);
             margin: 0;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
             color: var(--accent-color);
-            text-shadow: 0 0 15px rgba(0,0,0,0.8);
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
         .subtitle {
             font-family: 'Alumni Sans Pinstripe', sans-serif;
             font-size: 1.6rem;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             opacity: 0.8;
-            margin-top: 5px;
+            margin-top: 8px;
+            text-transform: uppercase;
         }
 
         .section-title {
             text-align: left;
-            font-size: 0.9rem;
-            margin: 30px 0 15px 10px;
+            font-size: 0.85rem;
+            margin: 35px 0 15px 10px;
             border-left: 3px solid var(--accent-color);
-            padding-left: 10px;
-            letter-spacing: 1px;
+            padding-left: 12px;
+            letter-spacing: 2px;
+            color: var(--accent-color);
             text-transform: uppercase;
+            font-weight: bold;
         }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
         }
 
         .card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 22px;
+            border-radius: 15px;
+            padding: 25px;
             text-decoration: none;
             color: var(--text-color);
-            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
         .card:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             border-color: var(--accent-color);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
 
         .card h2 {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: normal;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         .card p {
             font-size: 0.8rem;
-            margin: 10px 0 0 0;
-            opacity: 0.7;
-            line-height: 1.4;
+            margin: 12px 0 0 0;
+            opacity: 0.65;
+            line-height: 1.5;
         }
 
         .tag {
             position: absolute;
-            top: 12px;
-            right: 15px;
-            font-size: 0.65rem;
+            top: 15px;
+            right: 20px;
+            font-size: 0.6rem;
             color: var(--accent-color);
             font-family: sans-serif;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
         }
 
         footer {
@@ -128,7 +133,13 @@
             margin-top: 60px;
             font-size: 0.75rem;
             line-height: 1.8;
-            opacity: 0.6;
+            opacity: 0.5;
+        }
+
+        /* PCのショートカットやホーム画面で綺麗に見えるための調整 */
+        @media (max-width: 600px) {
+            .container { padding: 20px 0; }
+            h1 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -137,50 +148,50 @@
 <div class="container">
     <header>
         <h1>Management Hub</h1>
-        <p class="subtitle">Operational Console for SDS </p>
+        <p class="subtitle">Operational Console for SDS</p>
     </header>
 
     <div class="section-title">Generation Tools</div>
     <div class="menu-grid">
         <a href="./1week.html" class="card">
-            <span class="tag">HTML</span>
+            <span class="tag">INTERNAL</span>
             <h2>Weekly Schedule</h2>
-            <p>スプシから1週間分の画像生成<br>（1week.html）</p>
+            <p>週間予定表の画像を生成</p>
         </a>
         <a href="./generator.html" class="card">
-            <span class="tag">HTML</span>
+            <span class="tag">INTERNAL</span>
             <h2>Daily Generator</h2>
-            <p>当日出勤の画像生成<br>（generator.html）</p>
+            <p>当日告知用の画像を生成</p>
         </a>
         <a href="./kokuchi.html" class="card">
-            <span class="tag">HTML</span>
+            <span class="tag">W.I.P.</span>
             <h2>Notice Maker</h2>
-            <p>SNS投稿用の告知文作成<br>（kokuchi.html - 開発中）</p>
+            <p>投稿用のマシンの予定でした。<br>（作成中止）</p>
         </a>
     </div>
 
-    <div class="section-title">Data & Public Links</div>
+    <div class="section-title">Operational Resources</div>
     <div class="menu-grid">
         <a href="https://docs.google.com/spreadsheets/d/1VNGLKOXVDqzMgcPkKeLvdFQDcFmDEPbuFDp54V4pCUc/edit?usp=sharing" target="_blank" class="card">
-            <span class="tag">SHEET</span>
-            <h2>Shift Schedule ↗</h2>
-            <p>出勤予定スプレッドシート<br>（データ入力元）</p>
+            <span class="tag">SHEET ↗</span>
+            <h2>Shift Data</h2>
+            <p>出勤予定管理スプレッドシート<br>出勤予定を入力してください。</p>
         </a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2Bw7DuKx4LYsPw6g04k0W3UcHbsBqs_rGPBOs-L-Ps-0PPg/viewform" target="_blank" class="card">
-            <span class="tag">FORM</span>
-            <h2>Reservation Form ↗</h2>
-            <p>お客様向け予約フォーム<br>（入力確認・管理用）</p>
+            <span class="tag">FORM ↗</span>
+            <h2>Reservation Form</h2>
+            <p>お客様向け予約フォーム画面。<br>告知の際に使用</p>
         </a>
         <a href="https://piku.page/@SDS_FF14" target="_blank" class="card">
-            <span class="tag">WEB</span>
-            <h2>Official Store HP ↗</h2>
-            <p>Seven Deadly Sins <br>公式インフォメーション</p>
+            <span class="tag">PUBLIC ↗</span>
+            <h2>Current Store HP</h2>
+            <p>Seven Deadly Sins 公式HP。<br>公開中</p>
         </a>
     </div>
 
     <footer>
-        本サイトはRP店舗SDS 運営用ポータルサイトです。<br>
-        Seven Deadly Sins
+        本サイトはSDS店舗用管理ポータルサイトです。<br>
+        Seven Deadly Sins 
     </footer>
 </div>
 
