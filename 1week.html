@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>WEEKLY CAST SCHEDULE - CENTERED HEADER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Rye&family=Shippori+Mincho:wght@700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+    <style>
+        :root { --panel-bg: #1a1a1a; }
+        body { background: var(--panel-bg); color: white; font-family: "Alegreya", serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        
+        .controls { background: #fff; color: #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; width: 950px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 100; }
+        .input-group { display: flex; gap: 15px; margin-top: 10px; }
+        textarea { flex: 1; height: 80px; padding: 10px; border: 2px solid #ddd; border-radius: 6px; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 12px 25px; font-weight: bold; cursor: pointer; border: none; border-radius: 6px; }
+        .gen-btn { background: #27ae60; color: white; }
+        .view-btn { background: #3498db; color: white; }
+
+        #capture-area {
+            width: 1280px; height: 720px;
+            background: url('./haikei.png') no-repeat center center;
+            background-size: cover;
+            position: relative; 
+            padding: 140px 80px 60px; 
+            box-sizing: border-box;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            gap: 15px; 
+            overflow: hidden;
+        }
+
+        /* 【修正ポイント】ヘッダーを中央に集約 */
+        .header-container {
+            position: absolute; 
+            top: 30px; 
+            left: 0;
+            width: 100%; 
+            display: flex; 
+            justify-content: center; /* 左右中央寄せ */
+            align-items: center; 
+            gap: 25px; /* 期間とタイトルの隙間を少し詰めて一体感を出す */
+        }
+
+        .period-display, .main-title {
+            font-family: 'Rye', cursive; 
+            font-size: 55px; 
+            color: #fff;
+            text-shadow: 4px 4px 12px rgba(0,0,0,0.9);
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .cast-row {
+            display: flex; align-items: center; width: 100%; flex: 1;
+            max-height: 120px; min-height: 90px;
+            background: rgba(255, 255, 255, 0.9); border-radius: 15px;
+            overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .cast-profile { width: 130px; height: 100%; position: relative; flex-shrink: 0; background: #000; }
+        
+        .cast-name-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 45%; 
+            background: linear-gradient(rgba(0,0,0,0.85), transparent);
+            display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; z-index: 2;
+        }
+
+        .cast-name { font-family: 'Shippori Mincho', serif; font-size: 15px; font-weight: bold; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .photo-box { width: 100%; height: 100%; }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .schedule-area { flex-grow: 1; display: flex; justify-content: space-around; align-items: center; padding: 0 40px; height: 100%; }
+        .day-unit { display: flex; flex-direction: column; align-items: center; }
+        .day-label { font-size: 13px; color: #555; font-weight: bold; margin-bottom: 2px; }
+        .status-mark { font-size: 32px; font-weight: bold; font-family: 'Shippori Mincho', serif; line-height: 1; }
+        .status-work { color: #d32f2f; }
+        .status-off { color: #ccc; }
+        .all-off-text { font-family: 'Shippori Mincho', serif; font-size: 24px; font-weight: bold; color: #888; letter-spacing: 4px; }
+
+        .copyright { position: absolute; bottom: 15px; right: 20px; font-family: 'Alumni Sans Pinstripe', sans-serif; font-size: 16px; color: rgba(255,255,255,0.4); }
+
+        .fullscreen-mode .controls { display: none; }
+        .fullscreen-mode #capture-area { position: fixed; top: 0; left: 0; z-index: 9999; }
+    </style>
+</head>
+<body id="main-body">
+
+<div class="controls">
+    <div style="font-weight:bold; margin-bottom:10px;">📅 期間スケジュール (Ver.20260206)</div>
+    <div class="input-group">
+        <textarea id="dataInput" placeholder="スプシデータを貼り付け"></textarea>
+        <div class="btn-group">
+            <button class="gen-btn" onclick="generate()">生成する</button>
+            <button class="view-btn" onclick="toggleView()">全画面表示</button>
+        </div>
+    </div>
+    <div style="margin-top:12px; display: flex; gap: 15px; align-items: center; font-size: 14px;">
+        期間: <input type="date" id="startDate"> ～ <input type="date" id="endDate">
+    </div>
+</div>
+
+<div id="capture-area" onclick="exitView()">
+    <div class="header-container">
+        <div class="period-display" id="periodText"></div>
+        <div class="main-title">CAST SCHEDULE</div>
+    </div>
+    <div id="cast-rows-container" style="display:contents;"></div>
+    <div class="copyright">(C) SQUARE ENIX</div>
+</div>
+
+<script>
+    function generate() {
+        const input = document.getElementById('dataInput').value;
+        const rows = input.split('\n');
+        const container = document.getElementById('cast-rows-container');
+        container.innerHTML = '';
+
+        const startInput = document.getElementById('startDate').value;
+        const endInput = document.getElementById('endDate').value;
+        if (!startInput || !endInput) { alert("期間を設定してください"); return; }
+
+        const start = new Date(startInput);
+        const end = new Date(endInput);
+        
+        const startStr = `${start.getMonth() + 1}/${start.getDate()}`;
+        const endStr = `${end.getMonth() + 1}/${end.getDate()}`;
+        document.getElementById('periodText').innerText = `${startStr}-${endStr}`;
+
+        const dateList = [];
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            dateList.push(new Date(d));
+        }
+
+        const scheduleData = {}; 
+        const castOrder = [];
+
+        rows.forEach(row => {
+            const cols = row.split('\t');
+            if (cols.length < 2) return;
+            const dateStr = cols[0].trim();
+            const name = cols[1].trim();
+            if (!name || name === "キャスト" || name === "name") return;
+
+            if (!scheduleData[name]) {
+                scheduleData[name] = {};
+                castOrder.push(name);
+            }
+            const normalizedDate = dateStr.split(' ')[0].replace(/-/g, '/');
+            scheduleData[name][normalizedDate] = true;
+        });
+
+        castOrder.forEach(name => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'cast-row';
+
+            let scheduleHtml = '';
+            let hasWork = false;
+
+            dateList.forEach(date => {
+                const dateKey = `${date.getFullYear()}/${('0' + (date.getMonth() + 1)).slice(-2)}/${('0' + date.getDate()).slice(-2)}`;
+                const isWorking = scheduleData[name][dateKey];
+                if (isWorking) hasWork = true;
+
+                scheduleHtml += `
+                    <div class="day-unit">
+                        <div class="day-label">${(date.getMonth() + 1)}/${date.getDate()}</div>
+                        <div class="status-mark ${isWorking ? 'status-work' : 'status-off'}">${isWorking ? '○' : '×'}</div>
+                    </div>`;
+            });
+
+            const displayContent = hasWork ? scheduleHtml : '<div class="all-off-text">お休み中</div>';
+
+            rowDiv.innerHTML = `
+                <div class="cast-profile">
+                    <div class="photo-box"><img src="./${encodeURIComponent(name)}.png" onerror="this.src='./noimage.png'"></div>
+                    <div class="cast-name-overlay">
+                        <div class="cast-name">${name}</div>
+                    </div>
+                </div>
+                <div class="schedule-area">${displayContent}</div>`;
+            container.appendChild(rowDiv);
+        });
+    }
+
+    function toggleView() { document.getElementById('main-body').classList.add('fullscreen-mode'); }
+    function exitView() { document.getElementById('main-body').classList.remove('fullscreen-mode'); }
+</script>
+</body>
+</html>

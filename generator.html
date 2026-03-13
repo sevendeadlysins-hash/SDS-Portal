@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>CAST SCHEDULE GENERATOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Rye&family=Shippori+Mincho:wght@700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+    <style>
+        :root { --panel-bg: #1a1a1a; }
+        body { background: var(--panel-bg); color: white; font-family: "Alegreya", serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; transition: background 0.3s; }
+        
+        .controls { background: #fff; color: #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; width: 950px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .input-group { display: flex; gap: 15px; margin-top: 10px; }
+        textarea { flex: 1; height: 100px; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 12px; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 12px 25px; font-weight: bold; cursor: pointer; border: none; border-radius: 6px; }
+        .gen-btn { background: #27ae60; color: white; }
+        .view-btn { background: #3498db; color: white; }
+
+        #capture-area {
+            width: 1280px; height: 720px;
+            background: url('./haikei.png') no-repeat center center;
+            background-size: cover;
+            position: relative; overflow: hidden;
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: space-around; 
+            align-content: center;   
+            gap: 20px; 
+            padding: 140px 40px 40px; 
+            box-sizing: border-box;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .fullscreen-mode { background: #000; padding: 0; }
+        .fullscreen-mode .controls, .fullscreen-mode .sc-tip { display: none; }
+        .fullscreen-mode #capture-area { position: fixed; top: 0; left: 0; z-index: 9999; box-shadow: none; border: none; cursor: zoom-out; }
+
+        .main-title { 
+            position: absolute; top: 40px; width: 100%; text-align: center; 
+            font-family: 'Rye', cursive; font-size: 65px; color: #fff; 
+            text-shadow: 4px 4px 10px rgba(0,0,0,0.9);
+            letter-spacing: 3px;
+        }
+
+        /* 著作権表記：Alumni Sans Pinstripe 使用 */
+        .copyright {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-family: 'Alumni Sans Pinstripe', sans-serif;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.4); /* 目立ちすぎないよう透過 */
+            letter-spacing: 1px;
+            pointer-events: none; /* クリックの邪魔をしない */
+        }
+
+        .cast-card {
+            width: 220px;
+            min-height: 430px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 6px; padding: 10px; box-sizing: border-box;
+            display: flex; flex-direction: column; 
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,1);
+        }
+
+        .cast-name { 
+            font-family: 'Alegreya', serif; font-size: 22px; font-weight: bold; color: #111; 
+            margin-bottom: 8px; border-bottom: 3px solid #c0392b; width: 100%; text-align: center; 
+        }
+
+        .photo-container { width: 200px; height: 280px; position: relative; background: #000; overflow: hidden; }
+        .cast-photo { width: 100%; height: 100%; object-fit: cover; }
+        
+        .absent-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+        .cast-card.is-absent .absent-overlay { display: block; }
+        .cast-card.is-absent .cast-photo { filter: grayscale(1) brightness(0.4); }
+
+        .time-list { 
+            width: 100%; 
+            margin-top: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .time-slot {
+            width: 100%;
+            font-family: 'Shippori Mincho', serif; font-size: 14px; font-weight: 700; color: #333;
+            background: rgba(0,0,0,0.06); border-radius: 3px; padding: 4px 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-sizing: border-box;
+        }
+        
+        .time-slot.reserved { background: #fffde7; border: 1px solid #fbc02d; color: #b71c1c; }
+        .reserved-label { font-size: 11px; background: #c0392b; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+
+        .off-text { 
+            color: #888; 
+            font-weight: bold; 
+            font-size: 20px; 
+            font-family: 'Shippori Mincho', serif;
+            text-align: center;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .sc-tip { margin-top: 15px; color: #aaa; font-size: 14px; }
+    </style>
+</head>
+<body id="main-body">
+
+<div class="controls">
+    <h3>🔧 CAST SCHEDULE GENERATOR (Ver.260130_2)</h3>
+    <div class="input-group">
+        <textarea id="dataInput" placeholder="スプシデータを貼り付け"></textarea>
+        <div class="btn-group">
+            <button class="gen-btn" onclick="generateBoard()">ボードを生成</button>
+            <button class="view-btn" onclick="toggleView()">全画面で表示</button>
+        </div>
+    </div>
+    <div style="margin-top:12px;">対象日: <input type="text" id="targetDate" placeholder="2026/01/30" style="padding:6px; width:120px;"></div>
+    <p class="sc-tip">※全画面にしたら <b>Win + Shift + S</b> でスクショ！</p>
+</div>
+
+<div id="capture-area" onclick="exitView()">
+    <div class="main-title" id="displayTitle">CAST SCHEDULE</div>
+    <div id="cast-container" style="display:contents;"></div>
+    <div class="copyright">(C) SQUARE ENIX</div>
+</div>
+
+<script>
+    function generateBoard() {
+        const input = document.getElementById('dataInput').value;
+        const rows = input.split('\n');
+        const container = document.getElementById('cast-container');
+        container.innerHTML = '';
+
+        let target = document.getElementById('targetDate').value;
+        if (!target) {
+            const now = new Date();
+            target = now.getFullYear() + '/' + ('0' + (now.getMonth() + 1)).slice(-2) + '/' + ('0' + now.getDate()).slice(-2);
+        }
+        document.getElementById('displayTitle').innerText = target + " CAST SCHEDULE";
+
+        const attendance = {};
+        const allCasts = new Set();
+
+        rows.forEach(row => {
+            const cols = row.split('\t');
+            if (cols.length < 2) return;
+            const dateVal = cols[0].trim();
+            const name = cols[1].trim();
+            if (name === "キャスト" || name === "name" || name === "") return;
+            allCasts.add(name);
+            if (dateVal.includes(target)) {
+                if (!attendance[name]) attendance[name] = [];
+                const timeSlot = cols[2] ? cols[2].trim() : "";
+                const reservation = cols[3] ? cols[3].trim() : "";
+                if(timeSlot) attendance[name].push({ time: timeSlot, isReserved: (reservation !== "") });
+            }
+        });
+
+        Array.from(allCasts).forEach(name => {
+            const slots = attendance[name];
+            const isAbsent = !slots || slots.length === 0;
+            let timeHtml = isAbsent ? '<div class="off-text">本日お休み</div>' : '';
+            if(!isAbsent) {
+                slots.forEach(slot => {
+                    const resClass = slot.isReserved ? 'reserved' : '';
+                    const label = slot.isReserved ? '<span class="reserved-label">予約有</span>' : '';
+                    timeHtml += `<div class="time-slot ${resClass}">${slot.time} ${label}</div>`;
+                });
+            }
+
+            const card = document.createElement('div');
+            card.className = `cast-card ${isAbsent ? 'is-absent' : ''}`;
+            card.innerHTML = `
+                <div class="cast-name">${name}</div>
+                <div class="photo-container">
+                    <img src="./${encodeURIComponent(name)}.png" class="cast-photo" onerror="this.src='./noimage.png'">
+                    <img src="./yasumi.png" class="absent-overlay">
+                </div>
+                <div class="time-list">${timeHtml}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function toggleView() { document.getElementById('main-body').classList.add('fullscreen-mode'); }
+    function exitView() { document.getElementById('main-body').classList.remove('fullscreen-mode'); }
+</script>
+
+</body>
+</html>

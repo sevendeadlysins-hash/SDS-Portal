@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Hub | SDS & Plaisir de Perle</title>
+    <link rel="shortcut icon" href="./SDS_II.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=New+Tegomin&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 現在のファイル名に合わせて haikei.png を指定 */
+            --bg-image: url('./haikei.png'); 
+            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #f0f0f0;
+            --accent-color: #d4af37; /* Gold */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'New Tegomin', serif;
+            /* 背景画像を共通化 */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), var(--bg-image);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            padding: 40px 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'IM Fell English', serif;
+            font-size: clamp(2rem, 8vw, 3.2rem);
+            margin: 0;
+            letter-spacing: 4px;
+            color: var(--accent-color);
+            text-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .subtitle {
+            font-family: 'Alumni Sans Pinstripe', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .section-title {
+            text-align: left;
+            font-size: 0.9rem;
+            margin: 30px 0 15px 10px;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 22px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-color);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            font-size: 0.8rem;
+            margin: 10px 0 0 0;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        .tag {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            font-size: 0.65rem;
+            color: var(--accent-color);
+            font-family: sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 0.75rem;
+            line-height: 1.8;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Management Hub</h1>
+        <p class="subtitle">Operational Console for SDS & Plaisir de Perle</p>
+    </header>
+
+    <div class="section-title">Generation Tools</div>
+    <div class="menu-grid">
+        <a href="./1week.html" class="card">
+            <span class="tag">HTML</span>
+            <h2>Weekly Schedule</h2>
+            <p>スプシから1週間分の画像生成<br>（1week.html）</p>
+        </a>
+        <a href="./generator.html" class="card">
+            <span class="tag">HTML</span>
+            <h2>Daily Generator</h2>
+            <p>当日出勤の画像生成<br>（generator.html）</p>
+        </a>
+        <a href="./kokuchi.html" class="card">
+            <span class="tag">HTML</span>
+            <h2>Notice Maker</h2>
+            <p>SNS投稿用の告知文作成<br>（kokuchi.html - 開発中）</p>
+        </a>
+    </div>
+
+    <div class="section-title">Data & Public Links</div>
+    <div class="menu-grid">
+        <a href="https://docs.google.com/spreadsheets/d/1VNGLKOXVDqzMgcPkKeLvdFQDcFmDEPbuFDp54V4pCUc/edit?usp=sharing" target="_blank" class="card">
+            <span class="tag">SHEET</span>
+            <h2>Shift Schedule ↗</h2>
+            <p>出勤予定スプレッドシート<br>（データ入力元）</p>
+        </a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2Bw7DuKx4LYsPw6g04k0W3UcHbsBqs_rGPBOs-L-Ps-0PPg/viewform" target="_blank" class="card">
+            <span class="tag">FORM</span>
+            <h2>Reservation Form ↗</h2>
+            <p>お客様向け予約フォーム<br>（入力確認・管理用）</p>
+        </a>
+        <a href="https://piku.page/@SDS_FF14" target="_blank" class="card">
+            <span class="tag">WEB</span>
+            <h2>Official Store HP ↗</h2>
+            <p>Seven Deadly Sins <br>公式インフォメーション</p>
+        </a>
+    </div>
+
+    <footer>
+        本サイトはRP店舗SDS 運営用ポータルサイトです。<br>
+        &copy; Seven Deadly Sins / Plaisir de Perle
+    </footer>
+</div>
+
+</body>
+</html>
